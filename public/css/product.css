@@ -7,22 +7,27 @@
 .form-control input,
 .form-control label {
     display: block;
+    margin-top: 10px;
+    font-size: 1.5rem;
 }
 .form-control input{
     border: 1px solid black;
     font: inherit;
     border-radius: 2px;
+    height: 2.5rem;
+    width:66.5%;
 }
 button{
-    color: #5903c9;
+    color: #248043;
     font: inherit;
-    border: 1px solid #5903c9;
+    border: 1px solid #248043;
     border-radius: 3px;
     cursor: pointer;
     background: white;
+    width: 68.5%;
 }
 button:hover,
 button:active{
-    background: #5903c9;
+    background: #248043;
     color: white;
 }

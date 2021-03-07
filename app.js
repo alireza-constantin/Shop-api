@@ -1,7 +1,7 @@
 //------------------------------------------------ Dependencies
 const express = require('express');
 const colors = require('colors');
-const exphbs = require('express-handlebars');
+const ejs = require('ejs');
 //------------------------------------------------ Local and Core Module
 const path = require('path');
 
@@ -12,21 +12,18 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 
 // -----------------------------------------------Template Engine --Handlebars
-app.engine(
-  'handlebars',
-  exphbs({ layoutsDir: 'views/layouts/', defaultLayout: 'main' })
-);
-app.set('view engine', 'handlebars');
+
+app.set('view engine', 'ejs');
 
 //------------------------------------------------Import routes
-const admin = require('./routes/admin');
+const { Router: adminRouter } = require('./routes/admin');
 const shop = require('./routes/shop');
 
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ------------------------------------------------------Using routes
-app.use('/admin', admin);
+app.use('/admin', adminRouter);
 app.use(shop);
 
 // ------------------------------------------------------404 page

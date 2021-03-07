@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
+    <title><%= pageTitle %></title>
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/product.css">
 </head>
@@ -12,8 +12,8 @@
     <header class="main-header">
         <nav class="main-header_nav">
             <ul class="main-header_item-list">
-                <li class="main-header_item"><a class="active"href="admin/add-product">Add Product</a><li>
-                <li class="main-header_item"><a  href="/">Shop</a></li>
+                <li class="main-header_item"><a class="<%= path === '/admin/add-product' ? 'active' : ''  %>" href="/admin/add-product  ">Add Product</a><li>
+                <li class="main-header_item"><a class="<%= path === '/' ? 'active' : ''  %>" href="/">Shop</a></li>
             </ul>
         </nav>
     </header>
