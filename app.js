@@ -1,7 +1,7 @@
 //------------------------------------------------ Dependencies
 const express = require('express');
 const colors = require('colors');
-
+const exphbs = require('express-handlebars');
 //------------------------------------------------ Local and Core Module
 const path = require('path');
 
@@ -11,9 +11,19 @@ const app = express();
 //------------------------------------------------ Body parser
 app.use(express.urlencoded({ extended: false }));
 
+// -----------------------------------------------Template Engine --Handlebars
+app.engine(
+  'handlebars',
+  exphbs({ layoutsDir: 'views/layouts/', defaultLayout: 'main' })
+);
+app.set('view engine', 'handlebars');
+
 //------------------------------------------------Import routes
 const admin = require('./routes/admin');
 const shop = require('./routes/shop');
+
+// ------------------------------------------------------Static Folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ------------------------------------------------------Using routes
 app.use('/admin', admin);
@@ -21,7 +31,7 @@ app.use(shop);
 
 // ------------------------------------------------------404 page
 app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+  res.status(404).render('404', { pageTitle: 'Not Found' });
 });
 
 //------------------------------------------------------- Starting Server
