@@ -1,17 +1,12 @@
 const express = require('express');
-const path = require('path');
 
-const { products } = require('./admin');
+// ----------------------------------------Import Controllers
+const { getProducts } = require('../controllers/products');
+
+// -----------------------------------------Initi Router
 const Router = express.Router();
 
 // ----------------------------------------routes
-Router.get('/', (req, res, next) => {
-  res.render('shop', {
-    pageTitle: 'Shop',
-    prods: products,
-    isActive: true,
-    path: '/',
-  });
-});
+Router.get('/', getProducts);
 
 module.exports = Router;

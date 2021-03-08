@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
 //------------------------------------------------Import routes
-const { Router: adminRouter } = require('./routes/admin');
+const adminRouter = require('./routes/admin');
 const shop = require('./routes/shop');
 
 // ------------------------------------------------------Static Folder
