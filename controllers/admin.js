@@ -9,18 +9,19 @@ exports.getAddProducts = (req, res, next) => {
 };
 
 exports.postAddProducts = (req, res, next) => {
-  const products = new Product(req.body.title);
+  const { title, imageUrl, price, description } = req.body;
+  const products = new Product(title, imageUrl, price, description);
   products.save();
   res.redirect('/');
 };
 
-exports.getProducts = async (req, res, next) => {
+exports.getAdminProducts = (req, res, next) => {
   Product.fetchAll((products) => {
-    res.render('shop/product-list', {
-      pageTitle: 'Shop',
+    res.render('admin/products', {
+      pageTitle: 'Admin Products',
       prods: products,
       isActive: true,
-      path: '/',
+      path: '/admin/products',
     });
   });
 };

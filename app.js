@@ -28,7 +28,7 @@ app.use(shop);
 
 // ------------------------------------------------------404 page
 app.use((req, res, next) => {
-  res.status(404).render('404', { pageTitle: 'Not Found' });
+  res.status(404).render('404', { pageTitle: 'Not Found', path: '/404' });
 });
 
 //------------------------------------------------------- Starting Server
