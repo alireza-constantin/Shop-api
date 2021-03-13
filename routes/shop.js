@@ -6,6 +6,7 @@ const {
   getCart,
   getIndex,
   getCheckout,
+  getOrders,
 } = require('../controllers/shop');
 
 // -----------------------------------------Initi Router
@@ -16,5 +17,6 @@ Router.get('/', getIndex);
 Router.get('/cart', getCart);
 Router.get('/products', getProducts);
 Router.get('/checkout', getCheckout);
+Router.get('/orders', getOrders);
 
 module.exports = Router;
