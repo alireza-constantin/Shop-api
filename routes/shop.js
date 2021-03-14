@@ -3,6 +3,7 @@ const express = require('express');
 // ----------------------------------------Import Controllers
 const {
   getProducts,
+  getProduct,
   getCart,
   getIndex,
   getCheckout,
@@ -16,6 +17,7 @@ const Router = express.Router();
 Router.get('/', getIndex);
 Router.get('/cart', getCart);
 Router.get('/products', getProducts);
+Router.get('/products/:productId', getProduct);
 Router.get('/checkout', getCheckout);
 Router.get('/orders', getOrders);
 
