@@ -8,6 +8,7 @@ const {
   getAdminProducts,
   getEditProducts,
   postEditProduct,
+  deleteProducts,
 } = require('../controllers/admin');
 
 // -----------------------------------------------Initit Router
@@ -18,4 +19,5 @@ Router.route('/add-product').get(getAddProducts).post(postAddProducts);
 Router.route('/products').get(getAdminProducts);
 Router.get('/edit-product/:productId', getEditProducts);
 Router.post('/edit-product', postEditProduct);
+Router.post('/delete-product', deleteProducts);
 module.exports = Router;
