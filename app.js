@@ -4,9 +4,15 @@ const colors = require('colors');
 const ejs = require('ejs');
 //------------------------------------------------ Local and Core Module
 const path = require('path');
-
+const mysql = require('./util/database');
 //------------------------------------------------ Initial express
 const app = express();
+
+// ------------------------------------------------
+mysql
+  .execute('SELECT * FROM products')
+  .then((res) => console.log(res))
+  .catch((err) => console.log(err));
 
 //------------------------------------------------ Body parser
 app.use(express.urlencoded({ extended: false }));
