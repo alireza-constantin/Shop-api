@@ -3,14 +3,16 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products) => {
-    res.render('shop/product-list', {
-      pageTitle: 'Products',
-      prods: products,
-      isActive: true,
-      path: '/products',
-    });
-  });
+  Product.fetchAll()
+    .then(([row]) => {
+      res.render('shop/product-list', {
+        pageTitle: 'Products',
+        prods: row,
+        isActive: true,
+        path: '/products',
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProduct = (req, res, next) => {
@@ -25,14 +27,16 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll((products) => {
-    res.render('shop/index', {
-      pageTitle: 'Shop',
-      prods: products,
-      isActive: true,
-      path: '/',
-    });
-  });
+  Product.fetchAll()
+    .then(([row]) => {
+      res.render('shop/index', {
+        pageTitle: 'Shop',
+        prods: row,
+        isActive: true,
+        path: '/',
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getCart = (req, res, next) => {
