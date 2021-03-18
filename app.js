@@ -20,6 +20,7 @@ app.set('view engine', 'ejs');
 //------------------------------------------------Import routes
 const adminRouter = require('./routes/admin');
 const shop = require('./routes/shop');
+const sequelize = require('./util/database');
 
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -33,6 +34,14 @@ app.use((req, res, next) => {
   res.status(404).render('404', { pageTitle: 'Not Found', path: '/404' });
 });
 
-//------------------------------------------------------- Starting Server
-const PORT = 3000 || process.env.PORT;
-app.listen(PORT, () => console.log(`Server is running on ${PORT}...`.yellow));
+// -------------------------------------------------------Init Database
+sequelize
+  .sync()
+  .then((res) => {
+    //------------------------------------------------------- Starting Server
+    const PORT = 3000 || process.env.PORT;
+    app.listen(PORT, () =>
+      console.log(`Server is running on ${PORT}...`.yellow)
+    );
+  })
+  .catch((err) => console.log(err));
