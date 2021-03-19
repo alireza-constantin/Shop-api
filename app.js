@@ -70,6 +70,9 @@ sequelize
     return user;
   })
   .then((user) => {
+    return user.createCart();
+  })
+  .then((user) => {
     //------------------------------------------------------- Starting Server
     const PORT = 3000 || process.env.PORT;
     app.listen(PORT, () =>
