@@ -1,5 +1,23 @@
 const Product = require('../models/product');
 
+//  @Method   Get Admin Products
+//  @Route    /admin/products
+exports.getAdminProducts = (req, res, next) => {
+  req.user
+    .getProducts()
+    .then((products) => {
+      res.render('admin/products', {
+        pageTitle: 'Admin Products',
+        prods: products,
+        isActive: true,
+        path: '/admin/products',
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+//  @Method   Get Add Products
+//  @Route    /admin/add-product
 exports.getAddProducts = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
@@ -9,6 +27,8 @@ exports.getAddProducts = (req, res, next) => {
   });
 };
 
+//  @Method   POST Add Products
+//  @Route    /admin/add-products
 exports.postAddProducts = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
   req.user
@@ -24,6 +44,8 @@ exports.postAddProducts = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+//  @Method   Get Edit Products
+//  @Route    /admin/edit-product/:produtId
 exports.getEditProducts = (req, res, next) => {
   const prodId = req.params.productId;
   const editing = req.query.edit;
@@ -46,6 +68,8 @@ exports.getEditProducts = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+//  @Method   POST Edit Products
+//  @Route    /admin/edit-product
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
   Product.findByPk(productId)
@@ -62,19 +86,8 @@ exports.postEditProduct = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.getAdminProducts = (req, res, next) => {
-  Product.findAll()
-    .then((products) => {
-      res.render('admin/products', {
-        pageTitle: 'Admin Products',
-        prods: products,
-        isActive: true,
-        path: '/admin/products',
-      });
-    })
-    .catch((err) => console.log(err));
-};
-
+//  @Method   POST Delete Products
+//  @Route    /admin/delete-product
 exports.deleteProducts = (req, res, next) => {
   prodId = req.body.productId;
   Product.findByPk(prodId)
