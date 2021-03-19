@@ -2,15 +2,19 @@
 const express = require('express');
 const colors = require('colors');
 const ejs = require('ejs');
+
 //------------------------------------------------ Local and Core Module
 const path = require('path');
+
+// -----------------------------------------------Database and Models
 const mysql = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-items');
+
 //------------------------------------------------ Initial express
 const app = express();
-
-// ------------------------------------------------
 
 //------------------------------------------------ Body parser
 app.use(express.urlencoded({ extended: false }));
@@ -47,9 +51,14 @@ app.use((req, res, next) => {
 // -------------------------------------------------------Relating Database
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Product.belongsToMany(Cart, { through: CartItem });
+Cart.belongsToMany(Product, { through: CartItem });
 
 // -------------------------------------------------------Init Database
 sequelize
+  // .sync({ force: true });
   .sync()
   .then((res) => {
     return User.findByPk(1);
