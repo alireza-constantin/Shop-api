@@ -2,21 +2,26 @@
 const express = require('express');
 const colors = require('colors');
 const ejs = require('ejs');
-
+const dotenv = require('dotenv');
 //------------------------------------------------ Local and Core Module
 const path = require('path');
 
+// Load ENV Variable
+dotenv.config({ path: './config/config.env' });
+
 // -----------------------------------------------Database and Models
-const mysql = require('./util/database');
-const Product = require('./models/product');
-const User = require('./models/user');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cart-items');
-const OrderItem = require('./models/order-items');
-const Order = require('./models/order');
+const mongoConnect = require('./util/database');
+// const Product = require('./models/product');
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-items');
+// const OrderItem = require('./models/order-items');
+// const Order = require('./models/order');
 
 //------------------------------------------------ Initial express
 const app = express();
+
+mongoConnect();
 
 //------------------------------------------------ Body parser
 app.use(express.urlencoded({ extended: false }));
@@ -26,62 +31,22 @@ app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
 //------------------------------------------------Import routes
-const adminRouter = require('./routes/admin');
-const shop = require('./routes/shop');
-const sequelize = require('./util/database');
+// const adminRouter = require('./routes/admin');
+// const shop = require('./routes/shop');
 
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => {
-  User.findByPk(1)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-});
 // ------------------------------------------------------Using routes
-app.use('/admin', adminRouter);
-app.use(shop);
+// app.use('/admin', adminRouter);
+// app.use(shop);
 
 // ------------------------------------------------------404 page
 app.use((req, res, next) => {
   res.status(404).render('404', { pageTitle: 'Not Found', path: '/404' });
 });
 
-// -------------------------------------------------------Relating Database
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Product.belongsToMany(Cart, { through: CartItem });
-Cart.belongsToMany(Product, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
-
-// -------------------------------------------------------Init Database
-sequelize
-  // .sync({ force: true })
-  .sync()
-  .then((res) => {
-    return User.findByPk(1);
-  })
-  .then((user) => {
-    if (!user) {
-      return User.create({ name: 'Alireza', email: 'alireza@yahoo.com' });
-    }
-    return user;
-  })
-  .then((user) => {
-    return user.createCart();
-  })
-  .then((user) => {
-    //------------------------------------------------------- Starting Server
-    const PORT = 3000 || process.env.PORT;
-    app.listen(PORT, () =>
-      console.log(`Server is running on ${PORT}...`.yellow)
-    );
-  })
-  .catch((err) => console.log(err));
+//------------------------------------------------------- Starting Server
+app.listen(process.env.PORT, () =>
+  console.log(`Server is running on ${process.env.PORT}...`.yellow)
+);
