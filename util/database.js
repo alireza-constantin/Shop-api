@@ -1,11 +1,11 @@
-const mongodb = require('mongodb');
+const mongoose = require('mongoose');
 
 const mongoConnect = async () => {
-  const connect = await mongodb.connect(process.env.MONGO_URI, {
+  const connect = await mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  console.log(`MongoDB is connected...`.cyan.bold);
+  console.log(`MongoDB is connected: ${connect.connection.host}...`.cyan.bold);
 };
 
 module.exports = mongoConnect;

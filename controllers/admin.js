@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const asyncHandler = require('../util/asyncHandler');
 
 //  @Method   Get Admin Products
 //  @Route    /admin/products
@@ -29,20 +30,17 @@ exports.getAddProducts = (req, res, next) => {
 
 //  @Method   POST Add Products
 //  @Route    /admin/add-products
-exports.postAddProducts = (req, res, next) => {
+exports.postAddProducts = asyncHandler(async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  req.user
-    .createProduct({
-      title,
-      imageUrl,
-      price,
-      description,
-    })
-    .then((result) => {
-      res.redirect('/admin/products');
-    })
-    .catch((err) => console.log(err));
-};
+  const product = await new Product({
+    title,
+    imageUrl,
+    price,
+    description,
+  });
+  await product.save();
+  await res.redirect('admin/products');
+});
 
 //  @Method   Get Edit Products
 //  @Route    /admin/edit-product/:produtId

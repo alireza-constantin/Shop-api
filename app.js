@@ -31,15 +31,15 @@ app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
 //------------------------------------------------Import routes
-// const adminRouter = require('./routes/admin');
-// const shop = require('./routes/shop');
+const adminRouter = require('./routes/admin');
+// const shopRouter = require('./routes/shop');
 
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ------------------------------------------------------Using routes
-// app.use('/admin', adminRouter);
-// app.use(shop);
+app.use('/admin', adminRouter);
+// app.use(shopRouter);
 
 // ------------------------------------------------------404 page
 app.use((req, res, next) => {
@@ -48,5 +48,5 @@ app.use((req, res, next) => {
 
 //------------------------------------------------------- Starting Server
 app.listen(process.env.PORT, () =>
-  console.log(`Server is running on ${process.env.PORT}...`.yellow)
+  console.log(`Server is running on ${process.env.PORT}...`.yellow.inverse)
 );
