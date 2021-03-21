@@ -10,6 +10,7 @@ const {
   getIndex,
   getCheckout,
   getOrders,
+  postOrder,
 } = require('../controllers/shop');
 
 // -----------------------------------------Initi Router
@@ -21,7 +22,8 @@ Router.route('/cart').get(getCart).post(postCart);
 Router.get('/products', getProducts);
 Router.get('/products/:productId', getProduct);
 Router.get('/checkout', getCheckout);
-Router.get('/orders', getOrders);
 Router.post('/delete-cart-item', postCartDeleteItem);
+Router.post('/create-order', postOrder);
+Router.get('/orders', getOrders);
 
 module.exports = Router;
