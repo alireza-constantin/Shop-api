@@ -19,14 +19,14 @@ exports.getAdminProducts = (req, res, next) => {
 
 //  @Method   Get Add Products
 //  @Route    /admin/add-product
-exports.getAddProducts = (req, res, next) => {
-  res.render('admin/edit-product', {
+exports.getAddProducts = asyncHandler(async (req, res, next) => {
+  await res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     isActive: true,
     path: '/admin/add-product',
     editing: false,
   });
-};
+});
 
 //  @Method   POST Add Products
 //  @Route    /admin/add-products

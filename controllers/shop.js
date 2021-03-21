@@ -1,45 +1,42 @@
-const e = require('express');
 const Product = require('../models/product');
-const Cart = require('../models/cart');
+const asyncHandler = require('../util/asyncHandler');
 
-exports.getProducts = (req, res, next) => {
-  Product.findAll()
-    .then((product) => {
-      res.render('shop/product-list', {
-        pageTitle: 'Products',
-        prods: product,
-        isActive: true,
-        path: '/products',
-      });
-    })
-    .catch((err) => console.log(err));
-};
+//  @Method   GET Products
+//  @Route    /
+// Home Page
+exports.getIndex = asyncHandler(async (req, res, next) => {
+  const product = await Product.find();
+  await res.render('shop/index', {
+    pageTitle: 'Shop',
+    prods: product,
+    path: '/',
+  });
+});
 
-exports.getProduct = (req, res, next) => {
+//  @Method   GET Products
+//  @Route    /products
+exports.getProducts = asyncHandler(async (req, res, next) => {
+  const product = await Product.find();
+
+  await res.render('shop/product-list', {
+    pageTitle: 'Products',
+    prods: product,
+    path: '/products',
+  });
+});
+
+//  @Method   GET Single Products
+//  @Route    /products/productId
+exports.getProduct = asyncHandler(async (req, res, next) => {
   const prodId = req.params.productId;
-  Product.findByPk(prodId)
-    .then((product) => {
-      res.render('shop/product-detail', {
-        product: product,
-        path: '/products',
-        pageTitle: product.title,
-      });
-    })
-    .catch((err) => console.log(err));
-};
+  const product = await Product.findById(prodId);
 
-exports.getIndex = (req, res, next) => {
-  Product.findAll()
-    .then((product) => {
-      res.render('shop/index', {
-        pageTitle: 'Shop',
-        prods: product,
-        isActive: true,
-        path: '/',
-      });
-    })
-    .catch((err) => console.log(err));
-};
+  await res.render('shop/product-detail', {
+    product: product,
+    path: '/products',
+    pageTitle: product.title,
+  });
+});
 
 exports.getCart = (req, res, next) => {
   req.user
