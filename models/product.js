@@ -19,6 +19,10 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
+  user: {
+    types: Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 module.exports = mongoose.model('Product', productSchema);
