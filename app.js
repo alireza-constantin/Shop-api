@@ -11,12 +11,8 @@ dotenv.config({ path: './config/config.env' });
 
 // -----------------------------------------------Database and Models
 const mongoConnect = require('./util/database');
-// const Product = require('./models/product');
-// const User = require('./models/user');
-// const Cart = require('./models/cart');
-// const CartItem = require('./models/cart-items');
-// const OrderItem = require('./models/order-items');
-// const Order = require('./models/order');
+const Product = require('./models/product');
+const User = require('./models/user');
 
 //------------------------------------------------ Initial express
 const app = express();
@@ -26,6 +22,12 @@ mongoConnect();
 //------------------------------------------------ Body parser
 app.use(express.urlencoded({ extended: false }));
 
+// -----------------------------------------------Getting User
+app.use(async (req, res, next) => {
+  const user = await User.findById('6058b12e9e40d700dcf1db5f');
+  req.user = user;
+  next();
+});
 // -----------------------------------------------Template Engine --Handlebars
 
 app.set('view engine', 'ejs');
@@ -45,6 +47,19 @@ app.use(shopRouter);
 app.use((req, res, next) => {
   res.status(404).render('404', { pageTitle: 'Not Found', path: '/404' });
 });
+
+//-------------------------------------------------------Creating User
+const exiUser = User.findOne();
+if (!exiUser) {
+  const user = new User({
+    name: 'Alireza',
+    email: 'alireza@mail.com',
+    cart: {
+      items: [],
+    },
+  });
+  user.save();
+}
 
 //------------------------------------------------------- Starting Server
 app.listen(process.env.PORT, () =>

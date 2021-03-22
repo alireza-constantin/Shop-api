@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 const asyncHandler = require('../util/asyncHandler');
 
-//  @Method   Get Admin Products
+//  @Method   Get Admin Products Page
 //  @Route    /admin/products
 exports.getAdminProducts = asyncHandler(async (req, res, next) => {
   const products = await Product.find();
@@ -13,7 +13,7 @@ exports.getAdminProducts = asyncHandler(async (req, res, next) => {
   });
 });
 
-//  @Method   Get Add Products
+//  @Method   Get Add Products Page
 //  @Route    /admin/add-product
 exports.getAddProducts = asyncHandler(async (req, res, next) => {
   await res.render('admin/edit-product', {
@@ -38,7 +38,7 @@ exports.postAddProducts = asyncHandler(async (req, res, next) => {
   await res.redirect('/admin/products');
 });
 
-//  @Method   Get Edit Products
+//  @Method   Get Edit Products Page
 //  @Route    /admin/edit-product/:produtId
 exports.getEditProducts = asyncHandler(async (req, res, next) => {
   const prodId = req.params.productId;
