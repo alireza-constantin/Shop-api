@@ -38,21 +38,17 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.getCart = (req, res, next) => {
-  req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts();
-    })
-    .then((product) => {
-      res.render('shop/cart', {
-        pageTitle: 'Your Cart',
-        path: '/cart',
-        product: product,
-      });
-    })
-    .catch((err) => console.log(err));
-};
+exports.getCart = asyncHandler(async (req, res, next) => {
+  const product = await req.user
+    .populate('cart.items.productId')
+    .execPopulate();
+  console.log(product.cart.items);
+  res.render('shop/cart', {
+    pageTitle: 'Your Cart',
+    path: '/cart',
+    product: product.cart.items,
+  });
+});
 
 exports.postCart = asyncHandler(async (req, res, next) => {
   const prodId = req.body.productId;
