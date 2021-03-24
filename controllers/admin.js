@@ -28,11 +28,14 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
 //  @Route    /admin/add-products
 exports.postAddProducts = asyncHandler(async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
+  const user = req.user._id;
+  console.log(user);
   const product = await new Product({
     title,
     imageUrl,
     price,
     description,
+    userId: user,
   });
   await product.save();
   await res.redirect('/admin/products');

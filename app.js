@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // -----------------------------------------------Getting User
 app.use(async (req, res, next) => {
-  const user = await User.findById('6058b12e9e40d700dcf1db5f');
+  const user = await User.findById('605afa736319211df8e68be9');
   req.user = user;
   next();
 });
