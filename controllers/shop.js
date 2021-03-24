@@ -54,38 +54,12 @@ exports.getCart = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.postCart = (req, res, next) => {
+exports.postCart = asyncHandler(async (req, res, next) => {
   const prodId = req.body.productId;
-  let fetchedCart;
-  let newQuantity = 1;
-  req.user
-    .getCart()
-    .then((cart) => {
-      fetchedCart = cart;
-      return cart.getProducts({ where: { id: prodId } });
-    })
-    .then((products) => {
-      let product;
-      if (products.length > 0) {
-        product = products[0];
-      }
-      if (product) {
-        const quantity = product.cartItem.quantity;
-        newQuantity = quantity + 1;
-        return product;
-      }
-      return Product.findByPk(prodId);
-    })
-    .then((product) => {
-      return fetchedCart.addProduct(product, {
-        through: { quantity: newQuantity },
-      });
-    })
-    .then(() => {
-      res.redirect('/cart');
-    })
-    .catch((err) => console.log(err));
-};
+  const product = await Product.findById(prodId);
+  await req.user.addToCart(product);
+  await res.redirect('/cart');
+});
 
 exports.postCartDeleteItem = (req, res, next) => {
   const prodId = req.body.productId;
