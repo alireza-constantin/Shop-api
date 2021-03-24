@@ -42,7 +42,6 @@ exports.getCart = asyncHandler(async (req, res, next) => {
   const product = await req.user
     .populate('cart.items.productId')
     .execPopulate();
-  console.log(product.cart.items);
   res.render('shop/cart', {
     pageTitle: 'Your Cart',
     path: '/cart',
@@ -57,21 +56,11 @@ exports.postCart = asyncHandler(async (req, res, next) => {
   await res.redirect('/cart');
 });
 
-exports.postCartDeleteItem = (req, res, next) => {
+exports.postCartDeleteItem = asyncHandler(async (req, res, next) => {
   const prodId = req.body.productId;
-  req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts({ where: { id: prodId } });
-    })
-    .then((products) => {
-      return products[0].cartItem.destroy();
-    })
-    .then(() => {
-      res.redirect('/cart');
-    })
-    .catch((err) => console.log(err));
-};
+  await req.user.deleteItemFromCart(prodId);
+  await res.redirect('/cart');
+});
 
 exports.postOrder = (req, res, next) => {
   let fetchedCart;
