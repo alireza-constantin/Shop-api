@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const asyncHandler = require('../util/asyncHandler');
+const Order = require('../models/order');
 
 //  @Method   GET Products
 //  @Route    /
@@ -62,35 +63,24 @@ exports.postCartDeleteItem = asyncHandler(async (req, res, next) => {
   await res.redirect('/cart');
 });
 
-exports.postOrder = (req, res, next) => {
-  let fetchedCart;
-  req.user
-    .getCart()
-    .then((cart) => {
-      fetchedCart = cart;
-      return cart.getProducts();
-    })
-    .then((products) => {
-      return req.user
-        .createOrder()
-        .then((order) => {
-          return order.addProducts(
-            products.map((product) => {
-              product.orderItem = { quantity: product.cartItem.quantity };
-              return product;
-            })
-          );
-        })
-        .catch((err) => console.log(err));
-    })
-    .then((result) => {
-      return fetchedCart.setProducts(null);
-    })
-    .then((result) => {
-      res.redirect('/orders');
-    })
-    .catch((err) => console.log(err));
-};
+exports.postOrder = asyncHandler(async (req, res, next) => {
+  const products = await req.user.cart.items.map((p) => {
+    return {
+      quantity: p.quantity,
+      product: p.productId,
+    };
+  });
+  const order = new Order({
+    user: {
+      name: req.user.name,
+      userId: req.user,
+    },
+    products: products,
+  });
+
+  await order.save();
+  await res.redirect('/orders');
+});
 
 exports.getOrders = (req, res, next) => {
   req.user
