@@ -1,16 +1,18 @@
 <%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <main>
+        <main class="centerd">
             <% if(product.length > 0){ %>
-                <ul>
+                <ul class="list">
                     <% product.forEach(prod => { %>
-                        <li>
-                            <p><%= prod.productId.title %> (<%= prod.quantity %>)</p>
-                            <form action="/delete-cart-item" method="POST">
-                                <button type="submit" class="btn" >Delete Item</button>
+                        <li class="list-item">
+                            <p class="items"><%= prod.productId.title %></p><p class="items num"><%= prod.quantity %></p>
+                            <form action="/delete-cart-item" method="POST" class="items">
+                                <button type="submit" class="btn" id="delete-btn" ><i class="fa fa-close"></i></button>
                                 <input type="hidden" value="<%= prod.productId.id %>" name="productId">
                             </form>
                         </li>
@@ -18,7 +20,7 @@
                 </ul>
                 <div class="centered">
                     <form action="/create-order" method="POST">
-                        <button type="submit" class="btn">Order Now!</button>
+                        <button type="submit" class="btn" id="order-btn">Order Now!</button>
                     </form>
                 </div>   
             <% } else { %>

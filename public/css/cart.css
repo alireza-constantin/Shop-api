@@ -1,0 +1,35 @@
+.list-item {
+    list-style: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.list {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.items{
+    padding: 5px 10px;
+}
+#delete-btn {
+    border: 1px solid #fd3636d7;
+    color: #fd3636d7;
+    font-weight: 900;
+}
+
+#delete-btn:hover,
+#delete-btn:active {
+  background-color: #fd3636d7;
+  color: white;
+}
+
+
+#order-btn {
+    width: 30%;
+    height: 50px;
+}
+
