@@ -64,10 +64,14 @@ exports.postCartDeleteItem = asyncHandler(async (req, res, next) => {
 });
 
 exports.postOrder = asyncHandler(async (req, res, next) => {
-  const products = await req.user.cart.items.map((p) => {
+  const product = await req.user
+    .populate('cart.items.productId')
+    .execPopulate();
+  const products = await product.cart.items.map((p) => {
+    console.log(product.cart.items);
     return {
       quantity: p.quantity,
-      product: p.productId,
+      product: { ...p.productId._doc },
     };
   });
   const order = new Order({
@@ -79,21 +83,19 @@ exports.postOrder = asyncHandler(async (req, res, next) => {
   });
 
   await order.save();
+  await req.user.clearCart();
   await res.redirect('/orders');
 });
 
-exports.getOrders = (req, res, next) => {
-  req.user
-    .getOrders({ include: ['products'] })
-    .then((orders) => {
-      res.render('shop/orders', {
-        path: '/orders',
-        pageTitle: 'Your Orders',
-        orders: orders,
-      });
-    })
-    .catch((err) => console.log(err));
-};
+exports.getOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({ 'user.userId': req.user._id });
+
+  res.render('shop/orders', {
+    path: '/orders',
+    pageTitle: 'Your Orders',
+    orders: orders,
+  });
+});
 
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {

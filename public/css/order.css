@@ -1,0 +1,16 @@
+h1{
+    font-size: 1.3rem;
+}
+.list-items {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    padding: 5px 10px;
+    list-style: none;
+    margin: 10px auto;
+}
+
+.items {
+    list-style: none;
+    border: 2px solid slategray;
+    padding: 7px;
+    margin: 0px;
+}
