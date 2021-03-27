@@ -35,6 +35,7 @@ app.set('view engine', 'ejs');
 //------------------------------------------------Import routes
 const adminRouter = require('./routes/admin');
 const shopRouter = require('./routes/shop');
+const authRouter = require('./routes/auth');
 
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -42,6 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ------------------------------------------------------Using routes
 app.use('/admin', adminRouter);
 app.use(shopRouter);
+app.use(authRouter);
 
 // ------------------------------------------------------404 page
 app.use((req, res, next) => {
