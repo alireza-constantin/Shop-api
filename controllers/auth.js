@@ -29,3 +29,13 @@ module.exports.postLogout = asyncHandler(async (req, res, next) => {
     res.redirect('/');
   });
 });
+
+module.exports.getSignup = asyncHandler(async (req, res, next) => {
+  await res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    isAuthenticated: false,
+  });
+});
+
+module.exports.postSignup = asyncHandler(async (req, res, next) => {});
