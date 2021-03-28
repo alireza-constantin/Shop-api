@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const asyncHandler = require('../util/asyncHandler');
+const bcrypt = require('bcryptjs');
 
 module.exports.getLogin = asyncHandler(async (req, res, next) => {
   await res.render('auth/login.ejs', {
@@ -10,15 +11,25 @@ module.exports.getLogin = asyncHandler(async (req, res, next) => {
 });
 
 module.exports.postLogin = asyncHandler(async (req, res, next) => {
-  const user = await User.findById('605afa736319211df8e68be9');
-  req.session.isloggedIn = true;
-  req.session.user = user;
-  await req.session.save((err) => {
-    if (err) {
-      console.log(err);
-    }
-    res.redirect('/');
-  });
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return res.redirect('/login');
+  }
+  const isMatch = await bcrypt.compare(req.body.password, user.password);
+
+  if (isMatch) {
+    req.session.isloggedIn = true;
+    req.session.user = user;
+    await req.session.save((err) => {
+      if (err) {
+        console.log(err);
+      }
+      res.redirect('/');
+    });
+  } else if (!isMatch) {
+    res.redirect('/login');
+  }
 });
 
 module.exports.postLogout = asyncHandler(async (req, res, next) => {
@@ -44,12 +55,12 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
   const confirmPassword = req.body.confirmPassword;
   const existUser = await User.findOne({ email: email });
   if (existUser) {
-    return res.redirect('/login');
+    return res.redirect('/signup');
   }
-
+  const hashedPassword = await bcrypt.hash(password, 12);
   const user = await new User({
     email: email,
-    password: password,
+    password: hashedPassword,
     cart: { items: [] },
   });
 

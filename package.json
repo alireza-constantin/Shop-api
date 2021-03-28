@@ -10,6 +10,7 @@
   "author": "Alireza Soheili",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "connect-mongodb-session": "^2.4.1",
     "dotenv": "^8.2.0",
