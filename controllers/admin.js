@@ -10,6 +10,7 @@ exports.getAdminProducts = asyncHandler(async (req, res, next) => {
     prods: products,
     isActive: true,
     path: '/admin/products',
+    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -21,6 +22,7 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
     isActive: true,
     path: '/admin/add-product',
     editing: false,
+    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -58,6 +60,7 @@ exports.getEditProducts = asyncHandler(async (req, res, next) => {
     pageTitle: 'Edit Product',
     path: 'admin/edit-product',
     editing,
+    isAuthenticated: req.session.isloggedIn,
   });
 });
 

@@ -1,6 +1,31 @@
-module.exports.login = (req, res, next) => {
-  res.render('auth/login.ejs', {
+const User = require('../models/user');
+const asyncHandler = require('../util/asyncHandler');
+
+module.exports.getLogin = asyncHandler(async (req, res, next) => {
+  await res.render('auth/login.ejs', {
     pageTitle: 'Login',
     path: '/login',
+    isAuthenticated: req.session.isloggedIn,
   });
-};
+});
+
+module.exports.postLogin = asyncHandler(async (req, res, next) => {
+  const user = await User.findById('605afa736319211df8e68be9');
+  req.session.isloggedIn = true;
+  req.session.user = user;
+  await req.session.save((err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.redirect('/');
+  });
+});
+
+module.exports.postLogout = asyncHandler(async (req, res, next) => {
+  await req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.redirect('/');
+  });
+});

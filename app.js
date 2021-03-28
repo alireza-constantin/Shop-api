@@ -3,6 +3,9 @@ const express = require('express');
 const colors = require('colors');
 const ejs = require('ejs');
 const dotenv = require('dotenv');
+const session = require('express-session');
+const mongoDBStore = require('connect-mongodb-session')(session);
+
 //------------------------------------------------ Local and Core Module
 const path = require('path');
 
@@ -19,12 +22,31 @@ const app = express();
 
 mongoConnect();
 
+const store = new mongoDBStore({
+  uri:
+    'mongodb+srv://alireza123:joker1224@alirezasoheili.qhzx1.mongodb.net/Shop',
+  collection: 'session',
+});
+
 //------------------------------------------------ Body parser
 app.use(express.urlencoded({ extended: false }));
 
+// ------------------------------------------------ Session middleware
+app.use(
+  session({
+    secret: 'alireza soheili fullstack developer',
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
+);
+
 // -----------------------------------------------Getting User
 app.use(async (req, res, next) => {
-  const user = await User.findById('605afa736319211df8e68be9');
+  if (!req.session.user) {
+    return next();
+  }
+  const user = await User.findById(req.session.user._id);
   req.user = user;
   next();
 });

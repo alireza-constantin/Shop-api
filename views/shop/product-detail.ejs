@@ -11,7 +11,8 @@
                 </div>
                 <h3>$<%= product.price %></h3>
                 <p><%= product.description %></p>
-                <%- include('../includes/add-to-cart.ejs') %> 
-            </div>
+                <% if(isAuthenticated) { %>
+                    <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                <% } %>            </div>
         </main>
         <%- include('../includes/end.ejs') %>
