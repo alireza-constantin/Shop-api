@@ -38,4 +38,21 @@ module.exports.getSignup = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports.postSignup = asyncHandler(async (req, res, next) => {});
+module.exports.postSignup = asyncHandler(async (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
+  const existUser = await User.findOne({ email: email });
+  if (existUser) {
+    return res.redirect('/login');
+  }
+
+  const user = await new User({
+    email: email,
+    password: password,
+    cart: { items: [] },
+  });
+
+  await user.save();
+  await res.redirect('/login');
+});

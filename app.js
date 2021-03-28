@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: false }));
 // ------------------------------------------------ Session middleware
 app.use(
   session({
-    secret: 'alireza soheili fullstack developer',
+    secret: 'alireza soheili',
     resave: false,
     saveUninitialized: false,
     store: store,
@@ -69,27 +69,12 @@ app.use(authRouter);
 
 // ------------------------------------------------------404 page
 app.use((req, res, next) => {
-  res
-    .status(404)
-    .render('404', {
-      pageTitle: 'Not Found',
-      path: '/404',
-      isAuthenticated: req.session.isLoggedIn,
-    });
-});
-
-//-------------------------------------------------------Creating User
-const exiUser = User.findOne();
-if (!exiUser) {
-  const user = new User({
-    name: 'Alireza',
-    email: 'alireza@mail.com',
-    cart: {
-      items: [],
-    },
+  res.status(404).render('404', {
+    pageTitle: 'Not Found',
+    path: '/404',
+    isAuthenticated: req.session.isLoggedIn,
   });
-  user.save();
-}
+});
 
 //------------------------------------------------------- Starting Server
 app.listen(process.env.PORT, () =>
