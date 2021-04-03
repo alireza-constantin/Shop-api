@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const asyncHandler = require('../util/asyncHandler');
 const bcrypt = require('bcryptjs');
+const transporter = require('../util/nodeMailer');
+const nodemailer = require('nodemailer');
 
 module.exports.getLogin = asyncHandler(async (req, res, next) => {
   let message = req.flash('error');
@@ -81,5 +83,20 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
   });
 
   await user.save();
+  await transporter.sendMail(
+    {
+      from: 'Shop@Constantin',
+      to: email,
+      subject: 'SignUp Successful', // Subject line
+      html: '<h1>Your Account Successfuly Created.</h1>', // html body
+    },
+    function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(info.response);
+      }
+    }
+  );
   await res.redirect('/login');
 });
