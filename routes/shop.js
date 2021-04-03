@@ -16,14 +16,15 @@ const {
 // -----------------------------------------Initi Router
 const Router = express.Router();
 
+const isAuth = require('../middleware/isAuth');
+
 // ----------------------------------------routes
 Router.get('/', getIndex);
-Router.route('/cart').get(getCart).post(postCart);
+Router.route('/cart').get(isAuth, getCart).post(isAuth, postCart);
 Router.get('/products', getProducts);
 Router.get('/products/:productId', getProduct);
-Router.get('/checkout', getCheckout);
-Router.post('/delete-cart-item', postCartDeleteItem);
-Router.post('/create-order', postOrder);
-Router.get('/orders', getOrders);
+Router.post('/delete-cart-item', isAuth, postCartDeleteItem);
+Router.post('/create-order', isAuth, postOrder);
+Router.get('/orders', isAuth, getOrders);
 
 module.exports = Router;

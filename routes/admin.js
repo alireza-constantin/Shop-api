@@ -14,10 +14,14 @@ const {
 // -----------------------------------------------Initit Router
 const Router = express.Router();
 
+const isAuth = require('../middleware/isAuth');
+
 // ------------------------------------------------routes
-Router.route('/add-product').get(getAddProducts).post(postAddProducts);
-Router.route('/products').get(getAdminProducts);
-Router.get('/edit-product/:productId', getEditProducts);
-Router.post('/edit-product', postEditProduct);
-Router.post('/delete-product', deleteProducts);
+Router.route('/add-product')
+  .get(isAuth, getAddProducts)
+  .post(isAuth, postAddProducts);
+Router.route('/products').get(isAuth, getAdminProducts);
+Router.get('/edit-product/:productId', isAuth, getEditProducts);
+Router.post('/edit-product', isAuth, postEditProduct);
+Router.post('/delete-product', isAuth, deleteProducts);
 module.exports = Router;
