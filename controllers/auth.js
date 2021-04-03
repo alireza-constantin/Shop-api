@@ -3,9 +3,16 @@ const asyncHandler = require('../util/asyncHandler');
 const bcrypt = require('bcryptjs');
 
 module.exports.getLogin = asyncHandler(async (req, res, next) => {
+  let message = req.flash('error');
+  // if (message.length > 0) {
+  //   message = message[0];
+  // } else if (message.length === 0) {
+  //   message = null;
+  // }
   await res.render('auth/login.ejs', {
     pageTitle: 'Login',
     path: '/login',
+    errMsg: message,
   });
 });
 
@@ -13,7 +20,8 @@ module.exports.postLogin = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    return res.redirect('/login');
+    await req.flash('error', 'Invalid email or password.');
+    return await res.redirect('/login');
   }
   const isMatch = await bcrypt.compare(req.body.password, user.password);
 
@@ -27,7 +35,8 @@ module.exports.postLogin = asyncHandler(async (req, res, next) => {
       res.redirect('/');
     });
   } else if (!isMatch) {
-    res.redirect('/login');
+    await req.flash('error', 'Invalid email or password.');
+    return await res.redirect('/login');
   }
 });
 
@@ -41,10 +50,17 @@ module.exports.postLogout = asyncHandler(async (req, res, next) => {
 });
 
 module.exports.getSignup = asyncHandler(async (req, res, next) => {
+  let message = req.flash('error');
+  // if (message.length > 0) {
+  //   message = message[0];
+  // } else if (message.length === 0) {
+  //   message = null;
+  // }
   await res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
     isAuthenticated: false,
+    errMsg: message,
   });
 });
 
@@ -54,7 +70,8 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
   const confirmPassword = req.body.confirmPassword;
   const existUser = await User.findOne({ email: email });
   if (existUser) {
-    return res.redirect('/signup');
+    await req.flash('error', 'Email Already Exists.');
+    return await res.redirect('/signup');
   }
   const hashedPassword = await bcrypt.hash(password, 12);
   const user = await new User({

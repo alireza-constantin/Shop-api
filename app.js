@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 //------------------------------------------------ Local and Core Module
 const path = require('path');
@@ -18,11 +19,13 @@ const mongoConnect = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
 
-//------------------------------------------------ Initial express
+//------------------------------------------------ Init express
 const app = express();
 
+//------------------------------------------------Init Database
 mongoConnect();
 
+// ------------------------------------------------Storing Session In Database
 const store = new mongoDBStore({
   uri:
     'mongodb+srv://alireza123:joker1224@alirezasoheili.qhzx1.mongodb.net/Shop',
@@ -51,13 +54,15 @@ app.use(async (req, res, next) => {
   req.user = user;
   next();
 });
-// -----------------------------------------------Template Engine --Handlebars
+// -----------------------------------------------Template Engine --ejs
 
 app.set('view engine', 'ejs');
 
-// ------------------------------------------------Implement CSURF
-
+// ------------------------------------------------Prevent Cross-Site Request Forgery -Security --csurf
 const csrfProtection = csrf();
+
+// -------------------------------------------------Init Flash message
+app.use(flash());
 
 //------------------------------------------------Import routes
 const adminRouter = require('./routes/admin');
