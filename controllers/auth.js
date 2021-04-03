@@ -6,7 +6,6 @@ module.exports.getLogin = asyncHandler(async (req, res, next) => {
   await res.render('auth/login.ejs', {
     pageTitle: 'Login',
     path: '/login',
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 

@@ -11,7 +11,6 @@ exports.getIndex = asyncHandler(async (req, res, next) => {
     pageTitle: 'Shop',
     prods: product,
     path: '/',
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -24,7 +23,6 @@ exports.getProducts = asyncHandler(async (req, res, next) => {
     pageTitle: 'Products',
     prods: product,
     path: '/products',
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -38,7 +36,6 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
     product: product,
     path: '/products',
     pageTitle: product.title,
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -50,7 +47,6 @@ exports.getCart = asyncHandler(async (req, res, next) => {
     pageTitle: 'Your Cart',
     path: '/cart',
     product: product.cart.items,
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -98,7 +94,6 @@ exports.getOrders = asyncHandler(async (req, res, next) => {
     path: '/orders',
     pageTitle: 'Your Orders',
     orders: orders,
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 

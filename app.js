@@ -5,6 +5,7 @@ const ejs = require('ejs');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 
 //------------------------------------------------ Local and Core Module
 const path = require('path');
@@ -54,6 +55,10 @@ app.use(async (req, res, next) => {
 
 app.set('view engine', 'ejs');
 
+// ------------------------------------------------Implement CSURF
+
+const csrfProtection = csrf();
+
 //------------------------------------------------Import routes
 const adminRouter = require('./routes/admin');
 const shopRouter = require('./routes/shop');
@@ -61,6 +66,18 @@ const authRouter = require('./routes/auth');
 
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
+
+//-------------------------------------------------------Initit csruf
+
+app.use(csrfProtection);
+
+// -------------------------------------------------------
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isloggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 // ------------------------------------------------------Using routes
 app.use('/admin', adminRouter);

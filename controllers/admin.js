@@ -10,7 +10,6 @@ exports.getAdminProducts = asyncHandler(async (req, res, next) => {
     prods: products,
     isActive: true,
     path: '/admin/products',
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -22,7 +21,6 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
     isActive: true,
     path: '/admin/add-product',
     editing: false,
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 
@@ -31,7 +29,6 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
 exports.postAddProducts = asyncHandler(async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
   const user = req.user._id;
-  console.log(user);
   const product = await new Product({
     title,
     imageUrl,
@@ -60,7 +57,6 @@ exports.getEditProducts = asyncHandler(async (req, res, next) => {
     pageTitle: 'Edit Product',
     path: 'admin/edit-product',
     editing,
-    isAuthenticated: req.session.isloggedIn,
   });
 });
 
