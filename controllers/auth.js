@@ -171,7 +171,6 @@ exports.postNewPassword = asyncHandler(async (req, res, next) => {
   const token = req.body.userToken;
   const newPassword = req.body.newPassword;
   const userId = req.body.userId;
-  console.log(newPassword);
   const user = await User.findOne({
     resetToken: token,
     resetTokenExpire: { $gt: Date.now() },
