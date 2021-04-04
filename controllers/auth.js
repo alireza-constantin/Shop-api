@@ -4,6 +4,7 @@ const asyncHandler = require('../util/asyncHandler');
 const bcrypt = require('bcryptjs');
 const transporter = require('../util/nodeMailer');
 const nodemailer = require('nodemailer');
+const user = require('../models/user');
 
 module.exports.getLogin = asyncHandler(async (req, res, next) => {
   let message = req.flash('error');
@@ -146,4 +147,41 @@ exports.postReset = asyncHandler(async (req, res, next) => {
       }
     );
   });
+});
+
+exports.getNewPassword = asyncHandler(async (req, res, next) => {
+  const token = req.params.token;
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpire: { $gt: Date.now() },
+  });
+  if (!user) {
+    return await res.redirect('/');
+  }
+  await res.render('auth/new-password', {
+    path: 'new-password',
+    pageTitle: 'New Password',
+    errMsg: req.flash('err'),
+    userId: user._id.toString(),
+    userToken: token,
+  });
+});
+
+exports.postNewPassword = asyncHandler(async (req, res, next) => {
+  const token = req.body.userToken;
+  const newPassword = req.body.newPassword;
+  const userId = req.body.userId;
+  console.log(newPassword);
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpire: { $gt: Date.now() },
+    _id: userId,
+  });
+
+  const hashPass = await bcrypt.hash(newPassword, 12);
+  user.password = hashPass;
+  user.resetToken = undefined;
+  user.resetTokenExpire = undefined;
+  await user.save();
+  await res.redirect('/');
 });
