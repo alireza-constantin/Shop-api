@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const User = require('../models/user');
 const asyncHandler = require('../util/asyncHandler');
 const bcrypt = require('bcryptjs');
@@ -87,10 +88,10 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
     {
       from: 'Shop@Constantin',
       to: email,
-      subject: 'SignUp Successful', // Subject line
-      html: '<h1>Your Account Successfuly Created.</h1>', // html body
+      subject: 'SignUp Successful',
+      html: '<h1>Your Account Successfuly Created.</h1>',
     },
-    function (error, info) {
+    (error, info) => {
       if (error) {
         console.log(error);
       } else {
@@ -99,4 +100,50 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
     }
   );
   await res.redirect('/login');
+});
+
+exports.getReset = asyncHandler(async (req, res, next) => {
+  await res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Reset Password',
+    errMsg: req.flash('not found'),
+  });
+});
+
+exports.postReset = asyncHandler(async (req, res, next) => {
+  await crypto.randomBytes(32, async (err, buffer) => {
+    if (err) {
+      console.log(err);
+    }
+    const token = buffer.toString('hex');
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      await req.flash('not found', 'Email Not found.');
+      return await res.redirect('/reset');
+    }
+
+    user.resetToken = token;
+    user.resetTokenExpire = Date.now() + 1000 * 60 * 10;
+
+    await user.save();
+    await res.redirect('/');
+    await transporter.sendMail(
+      {
+        from: 'Shop@Constantin',
+        to: req.body.email,
+        subject: 'Reset Password',
+        html: `<p>You Requested a Password Reset<p>
+        <p>If You Did Not Do This Ignore This E-Mail</p>
+        <p>Click this <a href="http://localhost:3000/reset/${token}">Link</a> to Set the New Password</p>
+        `,
+      },
+      (error, info) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(info.response);
+        }
+      }
+    );
+  });
 });
