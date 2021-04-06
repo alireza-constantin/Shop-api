@@ -63,6 +63,7 @@ module.exports.getSignup = asyncHandler(async (req, res, next) => {
     isAuthenticated: false,
     errMsg: message,
     oldInput: { email: '', password: '', confirmPass: '' },
+    valErr: [],
   });
 });
 
@@ -79,6 +80,7 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
       isAuthenticated: false,
       errMsg: errors.array()[0].msg,
       oldInput: { email, password, confirmPass },
+      valErr: errors.array(),
     });
   }
 
