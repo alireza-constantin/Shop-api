@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const transporter = require('../util/nodeMailer');
 const nodemailer = require('nodemailer');
 const user = require('../models/user');
+const { validationResult } = require('express-validator');
 
 module.exports.getLogin = asyncHandler(async (req, res, next) => {
   let message = req.flash('error');
@@ -55,11 +56,7 @@ module.exports.postLogout = asyncHandler(async (req, res, next) => {
 
 module.exports.getSignup = asyncHandler(async (req, res, next) => {
   let message = req.flash('error');
-  // if (message.length > 0) {
-  //   message = message[0];
-  // } else if (message.length === 0) {
-  //   message = null;
-  // }
+
   await res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
@@ -71,7 +68,16 @@ module.exports.getSignup = asyncHandler(async (req, res, next) => {
 module.exports.postSignup = asyncHandler(async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      isAuthenticated: false,
+      errMsg: errors.array()[0].msg,
+    });
+  }
   const existUser = await User.findOne({ email: email });
   if (existUser) {
     await req.flash('error', 'Email Already Exists.');
