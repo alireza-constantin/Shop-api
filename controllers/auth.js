@@ -78,11 +78,7 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
       errMsg: errors.array()[0].msg,
     });
   }
-  const existUser = await User.findOne({ email: email });
-  if (existUser) {
-    await req.flash('error', 'Email Already Exists.');
-    return await res.redirect('/signup');
-  }
+
   const hashedPassword = await bcrypt.hash(password, 12);
   const user = await new User({
     email: email,

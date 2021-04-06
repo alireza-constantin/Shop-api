@@ -14,7 +14,6 @@ const {
 } = require('../controllers/auth');
 
 const { isValid } = require('../middleware/isValidate');
-const { body } = require('express-validator');
 
 Router.route('/login').get(getLogin).post(postLogin);
 
