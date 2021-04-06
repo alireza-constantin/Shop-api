@@ -62,12 +62,14 @@ module.exports.getSignup = asyncHandler(async (req, res, next) => {
     pageTitle: 'Signup',
     isAuthenticated: false,
     errMsg: message,
+    oldInput: { email: '', password: '', confirmPass: '' },
   });
 });
 
 module.exports.postSignup = asyncHandler(async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const confirmPass = req.body.confirmPassword;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -76,6 +78,7 @@ module.exports.postSignup = asyncHandler(async (req, res, next) => {
       pageTitle: 'Signup',
       isAuthenticated: false,
       errMsg: errors.array()[0].msg,
+      oldInput: { email, password, confirmPass },
     });
   }
 
