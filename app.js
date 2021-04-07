@@ -47,12 +47,19 @@ app.use(
 
 // -----------------------------------------------Getting User
 app.use(async (req, res, next) => {
-  if (!req.session.user) {
-    return next();
+  try {
+    if (!req.session.user) {
+      return next();
+    }
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      return next();
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    throw new Error(error);
   }
-  const user = await User.findById(req.session.user._id);
-  req.user = user;
-  next();
 });
 // -----------------------------------------------Template Engine --ejs
 
