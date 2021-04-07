@@ -11,7 +11,7 @@ const flash = require('connect-flash');
 //------------------------------------------------ Local and Core Module
 const path = require('path');
 
-// Load ENV Variable
+// -----------------------------------------------Load ENV Variable
 dotenv.config({ path: './config/config.env' });
 
 // -----------------------------------------------Database and Models

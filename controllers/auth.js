@@ -24,7 +24,6 @@ module.exports.postLogin = asyncHandler(async (req, res, next) => {
   const email = req.body.email;
 
   const errors = await validationResult(req);
-
   if (!errors.isEmpty()) {
     return res.status(422).render('auth/login', {
       path: '/login',
