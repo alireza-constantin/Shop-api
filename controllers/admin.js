@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const asyncHandler = require('../util/asyncHandler');
 const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
 //  @Method   Get Admin Products Page
 //  @Route    /admin/products

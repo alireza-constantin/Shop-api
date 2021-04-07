@@ -7,9 +7,9 @@ const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
-
 //------------------------------------------------ Local and Core Module
 const path = require('path');
+const asyncHandler = require('./util/asyncHandler');
 
 // -----------------------------------------------Load ENV Variable
 dotenv.config({ path: './config/config.env' });
@@ -45,9 +45,22 @@ app.use(
   })
 );
 
+// ------------------------------------------------Prevent Cross-Site Request Forgery -Security --csurf
+const csrfProtection = csrf();
+
+app.use(csrfProtection);
+
+// -------------------------------------------------------
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isloggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 // -----------------------------------------------Getting User
-app.use(async (req, res, next) => {
-  try {
+app.use(
+  asyncHandler(async (req, res, next) => {
     if (!req.session.user) {
       return next();
     }
@@ -57,16 +70,11 @@ app.use(async (req, res, next) => {
     }
     req.user = user;
     next();
-  } catch (error) {
-    throw new Error(error);
-  }
-});
+  })
+);
 // -----------------------------------------------Template Engine --ejs
 
 app.set('view engine', 'ejs');
-
-// ------------------------------------------------Prevent Cross-Site Request Forgery -Security --csurf
-const csrfProtection = csrf();
 
 // -------------------------------------------------Init Flash message
 app.use(flash());
@@ -79,18 +87,6 @@ const authRouter = require('./routes/auth');
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-//-------------------------------------------------------Initit csruf
-
-app.use(csrfProtection);
-
-// -------------------------------------------------------
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isloggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
-
 // ------------------------------------------------------Using routes
 app.use('/admin', adminRouter);
 app.use(shopRouter);
@@ -101,7 +97,16 @@ app.use((req, res, next) => {
   res.status(404).render('404', {
     pageTitle: 'Not Found',
     path: '/404',
-    isAuthenticated: req.session.isLoggedIn,
+    isAuthenticated: req.session.isloggedIn,
+  });
+});
+
+// -------------------------------------------------------500 page
+app.use((err, req, res, next) => {
+  res.status(500).render('500', {
+    pageTitle: 'Server Error',
+    path: '/500',
+    isAuthenticated: req.session.isloggedIn,
   });
 });
 
