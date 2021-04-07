@@ -13,13 +13,13 @@ const {
   postNewPassword,
 } = require('../controllers/auth');
 
-const { isValid } = require('../middleware/isValidate');
+const { isValidSignup, isValidSignin } = require('../middleware/isValidate');
 
-Router.route('/login').get(getLogin).post(postLogin);
+Router.route('/login').get(getLogin).post(isValidSignin(), postLogin);
 
 Router.route('/logout').post(postLogout);
 
-Router.route('/signup').get(getSignup).post(isValid(), postSignup);
+Router.route('/signup').get(getSignup).post(isValidSignup(), postSignup);
 
 Router.route('/reset').get(getReset).post(postReset);
 

@@ -25,3 +25,20 @@
 .form-control input.invalid {
     border-color: red;
 }
+.login-form .login-btn {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    
+}
+.forget-password {
+    font-size: .85rem;
+    text-decoration: none;
+    color: black;
+}
+
+.forget-password:hover {
+    font-size: .92rem;
+    transition: ease-in;
+    text-decoration: underline #00695c;
+}

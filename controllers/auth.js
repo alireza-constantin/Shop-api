@@ -9,27 +9,46 @@ const { validationResult } = require('express-validator');
 
 module.exports.getLogin = asyncHandler(async (req, res, next) => {
   let message = req.flash('error');
-  // if (message.length > 0) {
-  //   message = message[0];
-  // } else if (message.length === 0) {
-  //   message = null;
-  // }
+
   await res.render('auth/login.ejs', {
     pageTitle: 'Login',
     path: '/login',
     errMsg: message,
+    oldInput: { email: '', password: '' },
+    valErr: [],
   });
 });
 
 module.exports.postLogin = asyncHandler(async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
+  const password = req.body.password;
+  const email = req.body.email;
 
-  if (!user) {
-    await req.flash('error', 'Invalid email or password.');
-    return await res.redirect('/login');
+  const errors = await validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'login',
+      isAuthenticated: false,
+      errMsg: errors.array()[0].msg,
+      oldInput: { email, password },
+      valErr: errors.array(),
+    });
   }
-  const isMatch = await bcrypt.compare(req.body.password, user.password);
 
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'login',
+      isAuthenticated: false,
+      errMsg: 'Invalid Email or Password',
+      oldInput: { email, password },
+      valErr: [],
+    });
+  }
+
+  const isMatch = await bcrypt.compare(req.body.password, user.password);
   if (isMatch) {
     req.session.isloggedIn = true;
     req.session.user = user;
@@ -40,8 +59,14 @@ module.exports.postLogin = asyncHandler(async (req, res, next) => {
       res.redirect('/');
     });
   } else if (!isMatch) {
-    await req.flash('error', 'Invalid email or password.');
-    return await res.redirect('/login');
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'login',
+      isAuthenticated: false,
+      errMsg: 'Invalid Email or Password',
+      oldInput: { email, password },
+      valErr: [],
+    });
   }
 });
 

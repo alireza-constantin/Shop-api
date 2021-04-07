@@ -20,13 +20,13 @@
             <div class="form-control">
                 <label for="password">Password</label>
                 <input 
-                class="<%= valErr.find(e => e.param === 'email') ? 'invalid' : '' %>"
+                class="<%= valErr.find(e => e.param === 'password') ? 'invalid' : '' %>"
                 type="password" name="password" id="password" value="<%= oldInput.password %>">
             </div>
             <div class="form-control">
                 <label for="confirmPassword">Confirm Password</label>
                 <input 
-                class="<%= valErr.find(e => e.param === 'email') ? 'invalid' : '' %>"
+                class="<%= valErr.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>"
                 type="password" name="confirmPassword" id="confirmPassword" value="<%= oldInput.confirmPass %>">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </div>
