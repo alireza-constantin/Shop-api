@@ -45,3 +45,17 @@ exports.isValidSignin = (req) => {
       .matches(/^(?=.*\d)(?=.*[a-z])[0-9a-zA-Z]{8,}$/, 'i'),
   ];
 };
+
+exports.isValidProduct = () => {
+  return [
+    body('title', 'Please enter a valid Title')
+      .isString()
+      .isLength({ min: 3 })
+      .trim(),
+    body('imageUrl', 'Please enter a valid Image url').isURL(),
+    body('price', 'Please enter a floate number').isFloat().trim(),
+    body('description', 'Description must be 5 char long min an 400 char max')
+      .isLength({ min: 5, max: 400 })
+      .trim(),
+  ];
+};

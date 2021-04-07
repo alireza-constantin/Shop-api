@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const asyncHandler = require('../util/asyncHandler');
+const { validationResult } = require('express-validator');
 
 //  @Method   Get Admin Products Page
 //  @Route    /admin/products
@@ -21,6 +22,9 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
     isActive: true,
     path: '/admin/add-product',
     editing: false,
+    hasErr: null,
+    errMsg: [],
+    valErr: [],
   });
 });
 
@@ -29,6 +33,26 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
 exports.postAddProducts = asyncHandler(async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
   const user = req.user._id;
+
+  const error = validationResult(req);
+  if (!error.isEmpty()) {
+    return await res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      isActive: true,
+      path: '/admin/add-product',
+      editing: false,
+      hasErr: true,
+      errMsg: error.array()[0].msg,
+      product: {
+        title,
+        imageUrl,
+        price,
+        description,
+      },
+      valErr: error.array(),
+    });
+  }
+
   const product = await new Product({
     title,
     imageUrl,
@@ -60,6 +84,9 @@ exports.getEditProducts = asyncHandler(async (req, res, next) => {
     pageTitle: 'Edit Product',
     path: 'admin/edit-product',
     editing,
+    hasErr: null,
+    errMsg: [],
+    valErr: [],
   });
 });
 
@@ -67,6 +94,27 @@ exports.getEditProducts = asyncHandler(async (req, res, next) => {
 //  @Route    /admin/edit-product
 exports.postEditProduct = asyncHandler(async (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
+
+  const error = validationResult(req);
+  if (!error.isEmpty()) {
+    return await res.status(422).render('admin/edit-product', {
+      pageTitle: 'Edit Product',
+      isActive: true,
+      path: '/admin/add-product',
+      editing: true,
+      hasErr: true,
+      errMsg: error.array()[0].msg,
+      product: {
+        title,
+        imageUrl,
+        price,
+        description,
+        _id: productId,
+      },
+      valErr: error.array(),
+    });
+  }
+
   const product = await Product.findById(productId);
   product.title = title;
   product.imageUrl = imageUrl;

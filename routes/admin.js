@@ -11,6 +11,7 @@ const {
   deleteProducts,
 } = require('../controllers/admin');
 
+const { isValidProduct } = require('../middleware/isValidate');
 // -----------------------------------------------Initit Router
 const Router = express.Router();
 
@@ -19,9 +20,9 @@ const isAuth = require('../middleware/isAuth');
 // ------------------------------------------------routes
 Router.route('/add-product')
   .get(isAuth, getAddProducts)
-  .post(isAuth, postAddProducts);
+  .post(isValidProduct(), isAuth, postAddProducts);
 Router.route('/products').get(isAuth, getAdminProducts);
 Router.get('/edit-product/:productId', isAuth, getEditProducts);
-Router.post('/edit-product', isAuth, postEditProduct);
+Router.post('/edit-product', isAuth, isValidProduct(), postEditProduct);
 Router.post('/delete-product', isAuth, deleteProducts);
 module.exports = Router;
