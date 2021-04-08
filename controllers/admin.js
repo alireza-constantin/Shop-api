@@ -113,7 +113,8 @@ exports.getEditProducts = asyncHandler(async (req, res, next) => {
 //  @Method   POST Edit Products
 //  @Route    /admin/edit-product
 exports.postEditProduct = asyncHandler(async (req, res, next) => {
-  const { productId, title, imageUrl, price, description } = req.body;
+  const { productId, title, price, description } = req.body;
+  const image = req.file;
 
   const error = validationResult(req);
   if (!error.isEmpty()) {
@@ -126,7 +127,6 @@ exports.postEditProduct = asyncHandler(async (req, res, next) => {
       errMsg: error.array()[0].msg,
       product: {
         title,
-        imageUrl,
         price,
         description,
         _id: productId,
@@ -137,7 +137,11 @@ exports.postEditProduct = asyncHandler(async (req, res, next) => {
 
   const product = await Product.findById(productId);
   product.title = title;
-  product.imageUrl = imageUrl;
+
+  // check if image is not undefined
+  if (image) {
+    product.imageUrl = image.path;
+  }
   product.price = price;
   product.description = description;
   await product.save();

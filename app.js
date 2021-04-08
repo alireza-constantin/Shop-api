@@ -66,7 +66,7 @@ const storageFile = multer.diskStorage({
     cb(null, 'images');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    cb(null, '/' + Date.now() + '-' + file.originalname);
   },
 });
 
@@ -115,6 +115,7 @@ const authRouter = require('./routes/auth');
 
 // ------------------------------------------------------Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // ------------------------------------------------------Using routes
 app.use('/admin', adminRouter);
