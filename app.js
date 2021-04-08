@@ -7,6 +7,9 @@ const session = require('express-session');
 const mongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+
 //------------------------------------------------ Local and Core Module
 const path = require('path');
 const asyncHandler = require('./util/asyncHandler');
@@ -33,7 +36,7 @@ const store = new mongoDBStore({
 });
 
 //------------------------------------------------ Body parser
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // ------------------------------------------------ Session middleware
 app.use(
@@ -44,6 +47,8 @@ app.use(
     store: store,
   })
 );
+
+app.use(multer({ dest: 'images' }).single('image'));
 
 // ------------------------------------------------Prevent Cross-Site Request Forgery -Security --csurf
 const csrfProtection = csrf();

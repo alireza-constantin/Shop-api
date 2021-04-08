@@ -32,8 +32,9 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
 //  @Method   POST Add Products
 //  @Route    /admin/add-products
 exports.postAddProducts = asyncHandler(async (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
+  const { title, price, description } = req.body;
   const user = req.user._id;
+  console.log(req.file);
 
   const error = validationResult(req);
   if (!error.isEmpty()) {
@@ -46,7 +47,7 @@ exports.postAddProducts = asyncHandler(async (req, res, next) => {
       errMsg: error.array()[0].msg,
       product: {
         title,
-        imageUrl,
+        imageUrl: req.file,
         price,
         description,
       },
@@ -56,7 +57,7 @@ exports.postAddProducts = asyncHandler(async (req, res, next) => {
 
   const product = await new Product({
     title,
-    imageUrl,
+    imageUrl: req.file,
     price,
     description,
     userId: user,
