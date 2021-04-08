@@ -48,7 +48,31 @@ app.use(
   })
 );
 
-app.use(multer({ dest: 'images' }).single('image'));
+// ---------------------------------------------------Multer middleware for uploda file
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const storageFile = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+app.use(
+  multer({ storage: storageFile, fileFilter: fileFilter }).single('image')
+);
 
 // ------------------------------------------------Prevent Cross-Site Request Forgery -Security --csurf
 const csrfProtection = csrf();
@@ -107,13 +131,13 @@ app.use((req, res, next) => {
 });
 
 // -------------------------------------------------------500 page
-app.use((err, req, res, next) => {
-  res.status(500).render('500', {
-    pageTitle: 'Server Error',
-    path: '/500',
-    isAuthenticated: req.session.isloggedIn,
-  });
-});
+// app.use((err, req, res, next) => {
+//   res.status(500).render('500', {
+//     pageTitle: 'Server Error',
+//     path: '/500',
+//     isAuthenticated: req.session.isloggedIn,
+//   });
+// });
 
 //------------------------------------------------------- Starting Server
 app.listen(process.env.PORT, () =>

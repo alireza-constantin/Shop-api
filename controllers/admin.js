@@ -33,8 +33,26 @@ exports.getAddProducts = asyncHandler(async (req, res, next) => {
 //  @Route    /admin/add-products
 exports.postAddProducts = asyncHandler(async (req, res, next) => {
   const { title, price, description } = req.body;
+  const image = req.file;
+  console.log(image);
   const user = req.user._id;
-  console.log(req.file);
+
+  if (!image) {
+    return await res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      isActive: true,
+      path: '/admin/add-product',
+      editing: false,
+      hasErr: true,
+      errMsg: 'Attached file is not an image.',
+      product: {
+        title,
+        price,
+        description,
+      },
+      valErr: [],
+    });
+  }
 
   const error = validationResult(req);
   if (!error.isEmpty()) {
@@ -47,7 +65,6 @@ exports.postAddProducts = asyncHandler(async (req, res, next) => {
       errMsg: error.array()[0].msg,
       product: {
         title,
-        imageUrl: req.file,
         price,
         description,
       },
@@ -55,9 +72,10 @@ exports.postAddProducts = asyncHandler(async (req, res, next) => {
     });
   }
 
+  const imageUrl = image.path;
   const product = await new Product({
     title,
-    imageUrl: req.file,
+    imageUrl,
     price,
     description,
     userId: user,
