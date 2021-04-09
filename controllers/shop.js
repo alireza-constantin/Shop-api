@@ -99,6 +99,15 @@ exports.getOrders = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.postOrderDelete = asyncHandler(async (req, res, next) => {
+  const orderId = req.body.orderId;
+  if (!orderId) {
+    return next(new Error('Order not found'));
+  }
+  await Order.findByIdAndDelete(orderId);
+  await res.redirect('/orders');
+});
+
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {
     pageTitle: 'Checkout',

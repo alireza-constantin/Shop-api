@@ -12,6 +12,7 @@ const {
   getOrders,
   postOrder,
   getInvoices,
+  postOrderDelete,
 } = require('../controllers/shop');
 
 // -----------------------------------------Initi Router
@@ -28,5 +29,6 @@ Router.post('/delete-cart-item', isAuth, postCartDeleteItem);
 Router.post('/create-order', isAuth, postOrder);
 Router.get('/orders', isAuth, getOrders);
 Router.get('/orders/:orderId', isAuth, getInvoices);
+Router.post('/delete-order-item', isAuth, postOrderDelete);
 
 module.exports = Router;

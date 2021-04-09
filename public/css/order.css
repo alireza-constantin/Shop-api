@@ -14,3 +14,12 @@ h1{
     padding: 7px;
     margin: 0px;
 }
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete-form {
+    border: none;
+    margin-top: 10px;
+}
