@@ -1,6 +1,8 @@
 const Product = require('../models/product');
 const asyncHandler = require('../util/asyncHandler');
 const Order = require('../models/order');
+const fs = require('fs');
+const path = require('path');
 
 //  @Method   GET Products
 //  @Route    /
@@ -103,3 +105,31 @@ exports.getCheckout = (req, res, next) => {
     path: '/checkout',
   });
 };
+
+exports.getInvoices = asyncHandler(async (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'invoice-' + orderId + '.pdf';
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+  const order = await Order.findById(orderId);
+
+  if (!order) {
+    return next(new Error('order not found.'));
+  }
+
+  if (order.user.userId.toString() !== req.user._id.toString()) {
+    return next(new Error('User is not Authorized.'));
+  }
+
+  await fs.readFile(invoicePath, (err, data) => {
+    if (err) {
+      return next(err);
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      'inline; filename="' + invoiceName + '"'
+    );
+    res.status(200).send(data);
+  });
+});
