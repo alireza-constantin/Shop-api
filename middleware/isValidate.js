@@ -55,7 +55,7 @@ exports.isValidProduct = () => {
     body('image', 'Please enter a valid Image url'),
     body('price', 'Please enter a floate number').isFloat().trim(),
     body('description', 'Description must be 5 char long min an 400 char max')
-      .isLength({ min: 5, max: 400 })
+      .isLength({ min: 5, max: 1000 })
       .trim(),
   ];
 };

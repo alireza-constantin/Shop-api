@@ -3,7 +3,7 @@ const asyncHandler = require('../util/asyncHandler');
 const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
-
+const pdfDocument = require('pdfkit');
 //  @Method   GET Products
 //  @Route    /
 // Home Page
@@ -120,16 +120,31 @@ exports.getInvoices = asyncHandler(async (req, res, next) => {
     return next(new Error('User is not Authorized.'));
   }
 
-  await fs.readFile(invoicePath, (err, data) => {
-    if (err) {
-      return next(err);
-    }
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      'inline; filename="' + invoiceName + '"'
-    );
-    res.status(200).send(data);
+  const pdfDoc = new pdfDocument();
+  pdfDoc.pipe(fs.createWriteStream(invoicePath));
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader(
+    'Content-Disposition',
+    'inline; filename="' + invoiceName + '"'
+  );
+  pdfDoc.pipe(res);
+  pdfDoc.fontSize('25').text('Invoice', 200, 80);
+  pdfDoc.text('-------------');
+  let sum = 0;
+  order.products.forEach((prod) => {
+    sum += prod.product.price * prod.quantity;
+    pdfDoc
+      .fontSize('12')
+      .text(
+        prod.product.title +
+          ' - ' +
+          prod.quantity +
+          ' x ' +
+          ' $' +
+          prod.product.price
+      );
   });
+  pdfDoc.text('------');
+  pdfDoc.fontSize('23').text('Total Price: $' + sum.toFixed(2));
+  pdfDoc.end();
 });

@@ -1,8 +1,7 @@
 const Product = require('../models/product');
 const asyncHandler = require('../util/asyncHandler');
 const { validationResult } = require('express-validator');
-const mongoose = require('mongoose');
-
+const { deleteFile } = require('../util/file');
 //  @Method   Get Admin Products Page
 //  @Route    /admin/products
 exports.getAdminProducts = asyncHandler(async (req, res, next) => {
@@ -140,6 +139,7 @@ exports.postEditProduct = asyncHandler(async (req, res, next) => {
 
   // check if image is not undefined
   if (image) {
+    deleteFile(product.imageUrl);
     product.imageUrl = image.path;
   }
   product.price = price;
@@ -152,7 +152,12 @@ exports.postEditProduct = asyncHandler(async (req, res, next) => {
 //  @Route    /admin/delete-product
 exports.deleteProducts = asyncHandler(async (req, res, next) => {
   prodId = req.body.productId;
-  const product = await Product.deleteOne({
+  const product = await Product.findById(prodId);
+  if (!product) {
+    return next(new Error(`Product doesn't found`));
+  }
+  await deleteFile(product.imageUrl);
+  await Product.deleteOne({
     _id: prodId,
     userId: req.user._id,
   });
