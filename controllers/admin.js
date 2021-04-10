@@ -151,7 +151,7 @@ exports.postEditProduct = asyncHandler(async (req, res, next) => {
 //  @Method   POST Delete Products
 //  @Route    /admin/delete-product
 exports.deleteProducts = asyncHandler(async (req, res, next) => {
-  prodId = req.body.productId;
+  prodId = req.params.productId;
   const product = await Product.findById(prodId);
   if (!product) {
     return next(new Error(`Product doesn't found`));
@@ -161,5 +161,5 @@ exports.deleteProducts = asyncHandler(async (req, res, next) => {
     _id: prodId,
     userId: req.user._id,
   });
-  await res.redirect('/admin/products');
+  await res.status(200).json({ msg: 'Success!' });
 });

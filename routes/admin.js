@@ -24,5 +24,5 @@ Router.route('/add-product')
 Router.route('/products').get(isAuth, getAdminProducts);
 Router.get('/edit-product/:productId', isAuth, getEditProducts);
 Router.post('/edit-product', isAuth, isValidProduct(), postEditProduct);
-Router.post('/delete-product', isAuth, deleteProducts);
+Router.delete('/product/:productId', isAuth, deleteProducts);
 module.exports = Router;
