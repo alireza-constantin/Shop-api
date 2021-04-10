@@ -25,3 +25,10 @@
 .product__description {
     text-align: center;
 }
+
+#prod__detail {
+    margin: 0 auto;
+    padding: 20px;
+    width: 40%;
+    font-size: 1.2rem;
+}

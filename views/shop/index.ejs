@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>  
+<link rel="stylesheet" href="/css/product.css">
 </head>
 
 <body>
@@ -15,11 +16,17 @@
                         </header>
                         <div class="card__image">
                             <img src="/<%= product.imageUrl %>"
-                                alt="<%= product.title %>">
+                            alt="<%= product.title %>">
                         </div>
                         <div class="card__content">
                             <h2 class="product__price">$<%= product.price %></h2>
-                            <p class="product__description"><%= product.description %></p>
+                            <p class="product__description">
+                                <% if (product.description.length > 50) { %>
+                                    <%= product.description.split(' ').slice(0,12).join(' ') %> ... 
+                                <% } else { %>
+                                    <%= product.description %>
+                                <% } %>
+                            </p>
                         </div>
                         <div class="card__actions">
                             <% if(isAuthenticated) { %>
@@ -33,5 +40,20 @@
         <% } else { %>
             <h1>No Products Found!</h1>
         <% } %>
+        <section class="pagination">
+            <% if(currentPage !== 1) { %>
+                <a href="?page=1">1</a>
+            <% } %>
+            <% if(hasPreviousPage && previousPage !== 1){ %>
+                <a href="?page=<%= previousPage %>" ><i class="fas fa-angle-double-left"></i></a>
+            <% } %>
+            <a href="?page=<%= currentPage %>" class="active"><%= currentPage %></a>
+            <% if(hasNextPage && nextPage !== lastPage){ %>
+                <a href="?page=<%= nextPage %>" ><i class="fas fa-angle-double-right"></i></a>
+            <% } %>
+            <% if(lastPage !== 1 && lastPage !== currentPage){ %>
+                <a href="?page=<%= lastPage %>"><%= lastPage %></a>
+            <% } %>
+        </section>
     </main>
 <%- include('../includes/end.ejs') %>

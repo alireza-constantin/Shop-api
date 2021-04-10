@@ -4,27 +4,48 @@ const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
 const pdfDocument = require('pdfkit');
+
+const itemsPerPage = 1;
 //  @Method   GET Products
 //  @Route    /
 // Home Page
 exports.getIndex = asyncHandler(async (req, res, next) => {
-  const product = await Product.find();
+  const page = +req.query.page || 1;
+  const productCounts = await Product.countDocuments();
+  const product = await Product.find()
+    .skip((page - 1) * itemsPerPage)
+    .limit(itemsPerPage);
   await res.render('shop/index', {
     pageTitle: 'Shop',
     prods: product,
     path: '/',
+    currentPage: page,
+    hasNextPage: itemsPerPage * page < productCounts,
+    hasPreviousPage: page > 1,
+    nextPage: page + 1,
+    previousPage: page - 1,
+    lastPage: Math.ceil(productCounts / itemsPerPage),
   });
 });
 
 //  @Method   GET Products
 //  @Route    /products
 exports.getProducts = asyncHandler(async (req, res, next) => {
-  const product = await Product.find();
-
+  const page = +req.query.page || 1;
+  const productCounts = await Product.countDocuments();
+  const product = await Product.find()
+    .skip((page - 1) * itemsPerPage)
+    .limit(itemsPerPage);
   await res.render('shop/product-list', {
     pageTitle: 'Products',
     prods: product,
     path: '/products',
+    currentPage: page,
+    hasNextPage: itemsPerPage * page < productCounts,
+    hasPreviousPage: page > 1,
+    nextPage: page + 1,
+    previousPage: page - 1,
+    lastPage: Math.ceil(productCounts / itemsPerPage),
   });
 });
 
