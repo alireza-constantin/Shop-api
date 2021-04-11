@@ -4,6 +4,9 @@ const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
 const pdfDocument = require('pdfkit');
+const stripe = require('stripe')(
+  'sk_test_51IezTGDy5lK6rdHFdats3OtzrvbdQ9QFNp4N6T8m2MtVLbMm43jQfuWfxLb9JM0SpiTfwa1Lvsv8C4wFiYktmBMX00iHPDIPd5'
+);
 
 const itemsPerPage = 1;
 //  @Method   GET Products
@@ -86,6 +89,41 @@ exports.postCartDeleteItem = asyncHandler(async (req, res, next) => {
   await res.redirect('/cart');
 });
 
+exports.getCheckout = asyncHandler(async (req, res, next) => {
+  const product = await req.user
+    .populate('cart.items.productId')
+    .execPopulate();
+
+  let sum = 0;
+  const prodItems = product.cart.items;
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: prodItems.map((p) => {
+      return {
+        name: p.productId.title,
+        description: p.productId.description,
+        amount: p.productId.price * 100,
+        currency: 'usd',
+        quantity: p.quantity,
+      };
+    }),
+    success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+    cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel',
+  });
+
+  await prodItems.forEach((p) => {
+    sum += p.quantity * p.productId.price;
+  });
+  res.render('shop/checkout', {
+    pageTitle: 'Checkout',
+    path: '/checkout',
+    product: prodItems,
+    totalSum: sum,
+    sessionId: session.id,
+  });
+});
+
 exports.postOrder = asyncHandler(async (req, res, next) => {
   const product = await req.user
     .populate('cart.items.productId')
@@ -128,13 +166,6 @@ exports.postOrderDelete = asyncHandler(async (req, res, next) => {
   await Order.findByIdAndDelete(orderId);
   await res.redirect('/orders');
 });
-
-exports.getCheckout = (req, res, next) => {
-  res.render('shop/checkout', {
-    pageTitle: 'Checkout',
-    path: '/checkout',
-  });
-};
 
 exports.getInvoices = asyncHandler(async (req, res, next) => {
   const orderId = req.params.orderId;
